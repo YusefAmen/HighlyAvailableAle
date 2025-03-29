@@ -1,0 +1,74 @@
+# Headless Service for stable pod identity
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+spec:
+  clusterIP: None  # Headless, no load balancing
+  selector:
+    app: mysql
+  ports:
+  - port: 3306
+    targetPort: 3306
+---
+# StatefulSet for MySQL
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql
+spec:
+  serviceName: mysql-service  # Links to the headless Service
+  replicas: 1  # Start with 1, can scale later with clustering
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:5.7
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "password"
+        - name: MYSQL_DATABASE
+          value: "mydb"
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+        readinessProbe:  # Ensures pod is ready before traffic hits it
+          exec:
+            command:
+            - mysql
+            - -h
+            - localhost
+            - -uroot
+            - -ppassword
+            - -e
+            - "SELECT 1;"
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:  # Detects if MySQL crashes and restarts the pod
+          exec:
+            command:
+            - mysql
+            - -h
+            - localhost
+            - -uroot
+            - -ppassword
+            - -e
+            - "SELECT 1;"
+          initialDelaySeconds: 15
+          periodSeconds: 20
+  volumeClaimTemplates:
+  - metadata:
+      name: mysql-data
+    spec:
+      accessModes: ["ReadWriteOnce"]
+      resources:
+        requests:
+          storage: 1Gi  # Adjust size as needed
