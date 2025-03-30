@@ -16,7 +16,7 @@ def get_db_connection():
 def hello():
     conn = get_db_connection()
     cursor = conn.cursor()
-    cursor.execute("CREAT TABLE IF NOT EXISTS visits (id INT AUTO_INCREMENT PRIMARY KEY, count INT)")
+    cursor.execute("CREATE TABLE IF NOT EXISTS visits (id INT AUTO_INCREMENT PRIMARY KEY, count INT)")
     cursor.execute("INSERT INTO visits (count) VALUES (1)")
 
     conn.commit()
