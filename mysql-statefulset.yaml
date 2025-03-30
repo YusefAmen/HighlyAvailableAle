@@ -18,7 +18,7 @@ metadata:
   name: mysql
 spec:
   serviceName: mysql-service  # Links to the headless Service
-  replicas: 1  # Start with 1, can scale later with clustering
+  replicas: 1  # Start with 1, can scale later with clustering and further testing of failover
   selector:
     matchLabels:
       app: mysql
@@ -29,7 +29,7 @@ spec:
     spec:
       containers:
       - name: mysql
-        image: mysql:5.7
+        image: mysql:8.0
         env:
         - name: MYSQL_ROOT_PASSWORD
           value: "password"
