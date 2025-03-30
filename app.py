@@ -4,7 +4,6 @@ import os
 
 app = Flask(__name__)
 
-
 def get_db_connection():
     return mysql.connector.connect(
         host=os.getenv("MYSQL_HOST", "mysql-service"),
@@ -32,5 +31,3 @@ def hello():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001)
-
-

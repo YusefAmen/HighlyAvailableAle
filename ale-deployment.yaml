@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ale-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: ale-app
+  template:
+    metadata:
+      labels:
+        app: ale-app
+    spec:
+      containers:
+      - name: ale-app
+        image: ale-app:latest
+        imagePullPolicy: Never  # Add this line
+        ports:
+        - containerPort: 5000
+        envFrom:
+        - configMapRef:
+            name: ale-config

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ale-service
+spec:
+  ports:
+  - port: 80
+    targetPort: 5001
+  selector:
+    app: ale-app
+  type: LoadBalancer
